@@ -6,31 +6,24 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  my-job:
+    name: build-and-deploy
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
+      # ...
+      - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Build Project
-        run: npm run build
-
-      - name: Configure Surge Files
+      # run any `bun` or `bunx` command
+      - run: bun install -g surge
+      - run: bun install
+      - run: bun run build
+      - name: Configure Surge
         run: |
           echo "string.osad.net" > ./dist/CNAME
-          cp ./dist/index.html ./dist/200.html 
+          cp ./dist/index.html ./dist/200.html
 
       - name: Deploy to Surge
-        run: |
-          npm install -g surge
-          surge ./dist --token ${{ secrets.SURGE_TOKEN }}
+        run: surge ./dist --token ${{ secrets.SURGE_TOKEN }} --domain string.osad.net
