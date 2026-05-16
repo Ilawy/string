@@ -1,0 +1,2 @@
+declare const input: string;
+declare var myLib: { doSomething: () => void; };
